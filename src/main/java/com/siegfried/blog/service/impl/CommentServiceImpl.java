@@ -1,9 +1,10 @@
 package com.siegfried.blog.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.siegfried.blog.dao.CommentDao;
+import com.siegfried.blog.dao.UserInfoDao;
 import com.siegfried.blog.dto.*;
 import com.siegfried.blog.entity.Comment;
 import com.siegfried.blog.service.CommentService;
@@ -13,13 +14,18 @@ import com.siegfried.blog.utils.UserUtil;
 import com.siegfried.blog.vo.CommentVO;
 import com.siegfried.blog.vo.ConditionVO;
 import com.siegfried.blog.vo.DeleteVO;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.siegfried.blog.constant.CommonConst.FALSE;
+import static com.siegfried.blog.constant.CommonConst.*;
+import static com.siegfried.blog.constant.MQPrefixConst.EMAIL_EXCHANGE;
 import static com.siegfried.blog.constant.RedisPrefixConst.COMMENT_LIKE_COUNT;
 import static com.siegfried.blog.constant.RedisPrefixConst.COMMENT_USER_LIKE;
 
@@ -34,6 +40,10 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
     CommentDao commentDao;
     @Autowired
     RedisService redisService;
+    @Autowired
+    UserInfoDao userInfoDao;
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
     @Override
     public PageDTO<CommentDTO> listComments(Integer articleId, Long current) {
@@ -99,8 +109,34 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, Comment> impleme
                 .isDelete(FALSE)
                 .build();
         commentDao.insert(comment);
-        // 发送邮件通知用户
 
+        // 发送邮件通知用户
+        notice(commentVO);
+    }
+
+    /**
+     * 通知评论用户
+     *
+     * @param commentVO 评论信息
+     */
+    @Async
+    public void notice(CommentVO commentVO){
+        // -------判断用户是回复别人还是评论作者
+        Integer userId = Objects.nonNull(commentVO.getReplyId()) ? commentVO.getReplyId() : BLOGGER_ID;
+        // -------查询邮箱号
+        String email = userInfoDao.selectById(userId).getEmail();
+        if(email != null){
+            // -------获取评论页面直达路径
+            String url = Objects.nonNull(commentVO.getArticleId()) ? URL+ARTICLE_PATH+commentVO.getArticleId() : URL + LINK_PATH;
+            // -------发送邮件
+            EmailDTO emailDTO = EmailDTO.builder()
+                    .email(email)
+                    .subject("评论提醒")
+                    .content("您收到了一条新的回复，请前往\n" + url + "\n页面查看")
+                    .build();
+            rabbitTemplate.convertAndSend(EMAIL_EXCHANGE, "*", new Message(JSON.toJSONBytes(emailDTO), new MessageProperties()));
+            System.out.println("-----------------------------"+email);
+        }
     }
 
     @Override

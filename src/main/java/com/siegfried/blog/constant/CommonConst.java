@@ -34,7 +34,7 @@ public class CommonConst {
     /**
      * 网站域名
      */
-    public static final String URL = "http://www.jelliam.top";
+    public static final String URL = "http://jelliam.top";
 
     /**
      * 文章页面路径

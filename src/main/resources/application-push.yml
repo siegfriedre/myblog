@@ -30,6 +30,24 @@ spring:
     host: ip
     port: 6379
     password: 密码
+  #mq配置
+  rabbitmq:
+    host: 服务器ip
+    port: 5672
+    username: MQ账号
+    password: MQ密码
+  #邮箱配置
+  mail:
+    host: smtp.163.com
+    username: xxx@163.com
+    password: 授权码
+    default-encoding: UTF-8
+    properties:
+      mail:
+      smtp:
+      auth: true
+      socketFactory:
+      class: javax.net.ssl.SSLSocketFactory
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
   configuration:
