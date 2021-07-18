@@ -59,4 +59,17 @@ public interface CommentService extends IService<Comment> {
      */
     void updateCommentDelete(DeleteVO deleteVO);
 
+    /**
+     * 获取留言板
+     * @param current 页码
+     * @return 留言板评论pagedto对象
+     */
+    PageDTO<CommentDTO> listMessages(Long current);
+
+    /**
+     * 后台获取留言
+     * @param conditionVO 条件
+     * @return 评论分页对象
+     */
+    PageDTO<CommentBackDTO> listMessageBackDTO(ConditionVO conditionVO);
 }

@@ -7,6 +7,8 @@ import com.siegfried.blog.entity.Message;
 import java.util.List;
 
 /**
+ *
+ *
  * Created by zy_zhu on 2021/5/4.
  */
 public interface MessageService extends IService<Message> {

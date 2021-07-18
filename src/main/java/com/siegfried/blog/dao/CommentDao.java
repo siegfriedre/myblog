@@ -61,4 +61,11 @@ public interface CommentDao extends BaseMapper<Comment> {
      * @return 数目
      */
     Integer countCommentDTO(@Param("conditionVO") ConditionVO conditionVO);
+
+    /**
+     * 后台获取留言列表
+     * @param conditionVO 条件
+     * @return 评论列表
+     */
+    List<CommentBackDTO> listMessageBackDTO(@Param("conditionVO") ConditionVO conditionVO);
 }

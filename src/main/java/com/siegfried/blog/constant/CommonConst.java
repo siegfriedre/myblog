@@ -46,4 +46,8 @@ public class CommonConst {
      */
     public static final String LINK_PATH = "/links";
 
+    /**
+     * 留言板页面路径
+     */
+    public static final String MESSAGE_PATH = "/message";
 }

@@ -38,7 +38,7 @@ public class CommentController {
 
     @ApiOperation(value = "查看评论下的更多回复")
     @GetMapping("/comments/replies/{commentId}")
-    public Result<List<ReplyDTO>> listRepliesByCommentId(@Param("commentId") Integer commentId, Long current){
+    public Result<List<ReplyDTO>> listRepliesByCommentId(@PathVariable("commentId") Integer commentId, Long current){
         return new Result<>(true,StatusConst.OK,"查询成功",commentService.listRepliesByCommentId(commentId,current));
     }
 
@@ -56,6 +56,11 @@ public class CommentController {
         return new Result(true,StatusConst.OK,"点赞成功");
     }
 
+    @ApiOperation(value = "查看留言板")
+    @GetMapping("/message")
+    public Result<PageDTO<CommentDTO>> listMessages(Long current){
+        return new Result<>(true,StatusConst.OK,"查询成功",commentService.listMessages(current));
+    }
 
     //--------------------后台接口----------------------
 
@@ -77,5 +82,11 @@ public class CommentController {
     public Result deleteComment(@RequestBody List<Integer> commentIdList){
         commentService.removeByIds(commentIdList);
         return new Result(true,StatusConst.OK,"删除成功");
+    }
+
+    @ApiOperation(value = "查询后台评论")
+    @GetMapping("/admin/message")
+    public Result<PageDTO<CommentBackDTO>> listMessageBackDTO(ConditionVO conditionVO){
+        return new Result<>(true,StatusConst.OK,"查询成功",commentService.listMessageBackDTO(conditionVO));
     }
 }

@@ -45,7 +45,7 @@
         )
         ) t
         where
-        4 > row_num
+        3 > row_num
     </select>
 
     <select id="listReplyCountByCommentId" resultType="com.siegfried.blog.dto.ReplyCountDTO">
@@ -96,6 +96,7 @@
         left join tb_user_info r on c.reply_id = r.id
         where
             c.is_delete = #{conditionVO.isDelete}
+            and c.article_id is not null
             <if test="conditionVO.keywords != null">
                 and u.nickname like concat('%',#{condition.keywords},'%')
                 or c.comment_content like concat('%',#{condition.keywords},'%')
@@ -116,5 +117,24 @@
                 and u.nickname like concat('%',#{conditionVO.keywords},'%')
                 or c.comment_content like concat('%',#{condition.keywords},'%')
             </if>
+    </select>
+
+    <select id="listMessageBackDTO" resultType="com.siegfried.blog.dto.CommentBackDTO">
+        select
+        c.id,c.comment_content,c.create_time,c.is_delete,
+        u.nickname,u.avatar,
+        r.nickname as reply_nickname
+        from tb_comment c
+        left join tb_user_info u on c.user_id = u.id
+        left join tb_user_info r on c.reply_id = r.id
+        where
+        c.is_delete = #{conditionVO.isDelete}
+        and c.article_id is null
+        <if test="conditionVO.keywords != null">
+            and u.nickname like concat('%',#{condition.keywords},'%')
+            or c.comment_content like concat('%',#{condition.keywords},'%')
+        </if>
+        order by create_time desc
+        limit #{conditionVO.current},#{conditionVO.size}
     </select>
 </mapper>

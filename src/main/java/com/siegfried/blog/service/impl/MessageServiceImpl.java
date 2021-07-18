@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
+ * 暂时弃用原来的message弹幕，改用评论的形式，所以message相关组件暂时没使用
+ *
  * Created by zy_zhu on 2021/5/4.
  */
 @Service
