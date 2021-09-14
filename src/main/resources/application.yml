@@ -1,0 +1,62 @@
+server:
+    port: 8080
+spring:
+    application:
+        name: blog
+    datasource:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        #name: defaultDataSource
+        url: ${databaseUrl}
+        username: ${databaseUsername}
+        password: ${databasePassword}
+        hikari:
+            minimum-idle: 5
+            # 空闲连接存活最大时间，默认600000（10分钟）
+            idle-timeout: 180000
+            # 连接池最大连接数，默认是10
+            maximum-pool-size: 10
+            # 此属性控制从池返回的连接的默认自动提交行为,默认值：true
+            auto-commit: true
+            # 连接池名称
+            pool-name: MyHikariCP
+            # 此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+            max-lifetime: 1800000
+            # 数据库连接超时时间,默认30秒，即30000
+            connection-timeout: 30000
+            connection-test-query: SELECT 1
+    redis:
+        host: ${host}
+        port: 6379
+        password: ${redisPassword}
+    #mq配置
+    rabbitmq:
+        host: ${host}
+        port: 5672
+        username: ${rabbitmqUsername}
+        password: ${rabbitmqPassword}
+    #邮箱配置
+    mail:
+        host: smtp.163.com
+        username: ${mailUsername}
+        password: ${mailPassword}
+        default-encoding: UTF-8
+        properties:
+            mail:
+            smtp:
+            auth: true
+            socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+    profiles:
+        active: dev
+mybatis-plus:
+    mapper-locations: classpath:mapper/*.xml
+    configuration:
+        map-underscore-to-camel-case: true # 开启驼峰命名法
+
+aliyun:
+    url: ${aliyunUrl}
+    endpoint: ${aliyunEndpoint}
+    accessKeyId: ${accessKeyId}
+    accessKeySecret: ${accessKeySecret}
+    bucketName: "my-blog-pictures"

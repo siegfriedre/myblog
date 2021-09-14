@@ -4,8 +4,7 @@ target/
 !**/src/main/**
 !**/src/test/**
 ### 忽略掉配置文件 ###
-application.yml
-
+.env
 ### STS ###
 .apt_generated
 .classpath
